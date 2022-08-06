@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.UserBookMapper">
+
+<select id="SelectBookByid" resultType="com.qf.zlp.model.Book">
+
+    SELECT
+        b.bid,
+        b.bname
+    FROM
+        `user` u
+            INNER JOIN user_book ub ON u.uid = ub.uid
+            INNER JOIN book b ON ub.bid = b.bid
+    WHERE
+        u.uid =#{uid}
+
+    </select>
+
+<insert id="AddUserbookByid">
+    insert into user_book(bid,uid) values(#{bid},#{uid})
+    </insert>
+
+<delete id="DeleteUserBook">
+    delete from user_book where bid=#{bid}
+    </delete>
+
+<select id="selectUserBook" resultType="com.qf.zlp.model.UserBook">
+
+    select * from  user_book
+    <where>
+        <if test="bid != null">
+            uid=#{uid}
+        </if>
+        <if test="bid != null">
+            and bid=#{bid}
+        </if>
+    </where>
+    </select>
+</mapper>

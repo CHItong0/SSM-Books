@@ -1,0 +1,36 @@
+<ehcache>
+    <!--
+    这里配置的内容叫做缓存策略
+    -->
+    <!--当缓存写入到磁盘中的时候，写入的位置-->
+    <diskStore path="java.io.tmpdir/shiro-spring-sample"/>
+    <!--
+    缓存策略
+    maxElementsInMemory：内存中一共可以保存多少条数据
+    eternal：是否持久化，如果为 true，就表示持久化，持久化的话，这个数据就存到了磁盘上了
+    timeToIdleSeconds：存下来的数据，多长时间没人使用，就自动删除掉、
+    timeToLiveSeconds：数据的存活时间，数据存下来之后，多久之后，会自动删除掉
+    overflowToDisk：是否要写到磁盘中
+    diskPersistent：磁盘中的数据是否长期保存
+    diskExpiryThreadIntervalSeconds：会有一个默认的线程，每隔 120 秒扫描一次，找到过期的数据移除掉
+    -->
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="false"
+            timeToIdleSeconds="120"
+            overflowToDisk="false"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+    />
+    <cache name="shiro-activeSessionCache"
+           maxElementsInMemory="10000"
+           eternal="true"
+           overflowToDisk="true"
+           diskPersistent="true"
+           diskExpiryThreadIntervalSeconds="600"/>
+    <cache name="org.apache.shiro.realm.SimpleAccountRealm.authorization"
+           maxElementsInMemory="100"
+           eternal="false"
+           timeToLiveSeconds="600"
+           overflowToDisk="false"/>
+</ehcache>

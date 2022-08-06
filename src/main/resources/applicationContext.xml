@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--spring配置-->
+    <!--包扫描，不扫描Controller-->
+    <context:component-scan base-package="com.qf.zlp" use-default-filters="true">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--注入数据库配置文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!--ehcache 缓存机制-->
+    <bean class="org.apache.shiro.cache.ehcache.EhCacheManager" id="cacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+    <!--配置-->
+    <bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource">
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="url" value="${db.url}"/>
+    </bean>
+    <!--配置sql-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" >
+            <value>classpath*:com/qf/zlp/mapper/*.xml</value>
+        </property>
+        <!-- 注意其他配置 -->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <props>
+                            <prop key="helperDialect">mysql</prop>
+                            <prop key="reasonable">true</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="mapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean"/>
+        <property name="basePackage" value="com.qf.zlp.mapper"/>
+    </bean>
+
+
+    <bean class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" id="securityManager">
+        <property name="realm" ref="dbaRealm"/>
+        <property name="sessionManager">
+            <bean class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+                <!--不开启url 地址中的 sessionid 重写功能，也就是 sessionid 只能放在 Cookie中-->
+                <property name="sessionIdUrlRewritingEnabled" value="false"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--配置shiro  过滤器-->
+    <bean class="org.apache.shiro.spring.web.ShiroFilterFactoryBean" id="shiroFilter">
+        <!--引入securityManager对象-->
+        <property name="securityManager" ref="securityManager"/>
+        <!--配置登录地址，如果访问一个需要登录后才能访问的页面，就会自动跳转到/login -->
+        <property name="loginUrl" value="/login"/>
+        <!--配置拦截规则-->
+        <property name="filterChainDefinitions">
+            <!--
+             必须按顺序就行配置！！！！！
+              请求参数可以diy
+              /login=anon 表示路径可以匿名访问，用于进入登录页面，或者为登录访问页面
+              /**=authc 表示其余的请求，都要经过这个路径才能访问
+            -->
+            <!--
+            authc 必须通过身份校验
+            user：可以通过rememberMe校验
+            -->
+            <value>
+                /selectUser=user,perms[user:select]
+                /deleteUser=authc,perms[user:delete]
+                /updateUser=authc,perms[user:update]
+                /addUser=authc,perms[user:add]
+                /login=anon
+                /img/**=anon
+                /doLogin=anon
+                /register=anon
+                /doRegister=anon
+                /allBook=anon
+                /queryBookByName=anon
+                /logout=logout
+                /**=authc
+            </value>
+        </property>
+    </bean>
+
+
+</beans>

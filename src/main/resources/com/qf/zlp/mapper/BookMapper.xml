@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.BookMapper">
+
+<update id="UpdateBook" >
+    update book
+    <set>
+        <if test="bname != null and bname != ''">
+            bname=#{bname},
+        </if>
+        <if test="bdescribe != null and bdescribe != ''">
+            bdescribe=#{bdescribe},
+        </if>
+    </set>
+    where bid=#{bid}
+
+    </update>
+
+
+
+    <resultMap id="books" type="com.qf.zlp.model.Books" >
+        <result property="bid" column="bid"/>
+        <result property="bname" column="bname"/>
+        <result property="aname" column="aname"/>
+        <result property="bdescribe" column="bdescribe"/>
+        <result property="tname" column="tname"/>
+    </resultMap>
+
+    <select id="likeBooks" resultMap="books">
+
+        SELECT b.bid, b.bname, a.aname, b.bdescribe, t.tname
+        FROM author a
+                 INNER JOIN book_author ba ON a.aid = ba.aid
+                 INNER JOIN book b ON ba.bid = b.bid
+                 INNER JOIN book_types bt ON b.bid = bt.bid
+                 INNER JOIN types t ON bt.tid = t.tid
+
+        where bname
+        LIKE concat('%',#{name},'%')
+
+
+    </select>
+
+
+<select id="selectBookname" resultType="com.qf.zlp.model.Book">
+    select  * from  book
+    <where>
+        <if test="bid != null">
+            bid=#{bid}
+        </if>
+        <if test="bname != null and bname != ''">
+          and  bname=#{bname}
+        </if>
+        <if test="bdescribe != null and bdescribe != ''">
+           and bdescribe=#{bdescribe}
+        </if>
+    </where>
+    </select>
+
+<insert id="AddBook" keyProperty="bid" useGeneratedKeys="true">
+    insert into book(bname,bdescribe) values (#{bname},#{bdescribe})
+    </insert>
+
+<delete id="deleteBook">
+    delete from book where bid=#{bid}
+    </delete>
+
+
+<select id="BookName" resultType="com.qf.zlp.model.Book">
+    select * from book where bname=#{bname}
+    </select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.AuthorMapper">
+
+<update id="UpdateAuthor">
+    update author set aname=#{aname}  where aname=#{aname}
+    </update>
+
+<insert id="addAuthor" useGeneratedKeys="true" keyProperty="aid">
+    insert into author(aname) values (#{aname})
+    </insert>
+
+<select id="selectAuthor" resultType="com.qf.zlp.model.Author">
+
+    select  * from  Author
+    <where>
+        <if test="aid != null">
+           aid=#{aid}
+        </if>
+        <if test="aname != null and aname != ''">
+            and  aname=#{aname}
+
+        </if>
+    </where>
+    </select>
+
+<delete id="deleteAuthor">
+    delete from Author where aid=#{aid}
+    </delete>
+</mapper>

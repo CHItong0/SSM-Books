@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.BookAuthorMapper">
+
+<select id="selectBookAutor" resultType="com.qf.zlp.model.BookAuthor">
+
+    select  * from  Book_Author where bid=#{bid}
+    </select>
+
+<update id="UpdateBookAutor" >
+    update Book_Author set aid=#{aid} where bid=#{bid}
+    </update>
+
+<insert id="AdddBookAutoraid">
+    insert into Book_Author(aid,bid) values(#{aid},#{bid})
+</insert>
+
+<delete id="deleteBookAutoraid">
+    delete from Book_Author where bid=#{bid}
+    </delete>
+</mapper>
