@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.TypesMapper">
+
+<update id="UpdateTypes">
+    update types set tname=#{tname} where tname=#{tname}
+    </update>
+
+<select id="selectTypes" resultType="com.qf.zlp.model.Types">
+    select * from types
+    <where>
+        <if test="tid != null">
+            tid=#{tid}
+        </if>
+        <if test="tname != null and tname != ''">
+            tname=#{tname}
+        </if>
+    </where>
+    </select>
+
+<update id="DateTypes" >
+    update types set tname=#{tname} where tid={tid}
+    </update>
+
+<insert id="AddTypes"  useGeneratedKeys="true" keyProperty="bid" parameterType="com.qf.zlp.model.Types">
+    insert into types(tname) values(#{tname})
+    </insert>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.UserMapper">
+    <select id="SelectUser" resultType="com.qf.zlp.model.User">
+        select * from user where uname= #{uname};
+    </select>
+
+    <select id="getUserPermissionsByUsername" resultType="java.lang.String">
+        SELECT p.`name`
+        FROM `user` u
+                 INNER JOIN user_role ur ON u.uid = ur.rid
+                 INNER JOIN role r ON ur.rid = r.rid
+                 INNER JOIN role_permission rp ON r.rid = rp.rid
+                 INNER JOIN permission p ON rp.pid = p.id
+        WHERE u.uname = #{uname}
+    </select>
+
+    <select id="addUser" resultType="java.lang.Integer">
+        insert into user (uname,upassword) values (#{uname},#{upassword})
+    </select>
+    <resultMap id="books" type="Books" >
+        <result property="bid" column="bid"/>
+        <result property="bname" column="bname"/>
+        <result property="aname" column="aname"/>
+        <result property="bdescribe" column="bdescribe"/>
+        <result property="tname" column="tname"/>
+    </resultMap>
+
+    <select id="Allbook" resultMap="books">
+
+        SELECT b.bid, b.bname, a.aname, b.bdescribe, t.tname
+        FROM author a
+                 INNER JOIN book_author ba ON a.aid = ba.aid
+                 INNER JOIN book b ON ba.bid = b.bid
+                 INNER JOIN book_types bt ON b.bid = bt.bid
+                 INNER JOIN types t ON bt.tid = t.tid
+
+
+    </select>
+
+    <select id="getUserRname" resultType="java.lang.String">
+        SELECT r.rname
+        FROM `user` u
+        INNER JOIN user_role ur ON u.uid = ur.rid
+        INNER JOIN role r ON ur.rid = r.rid
+        INNER JOIN role_permission rp ON r.rid = rp.rid
+        INNER JOIN permission p ON rp.pid = p.id
+        WHERE u.uname = #{uname}
+
+    </select>
+
+    <select id="selectbooksbyid" resultType="Books">
+
+        SELECT b.bid, b.bname, a.aname, b.bdescribe, t.tname
+        FROM author a
+                 INNER JOIN book_author ba ON a.aid = ba.aid
+                 INNER JOIN book b ON ba.bid = b.bid
+                 INNER JOIN book_types bt ON b.bid = bt.bid
+                 INNER JOIN types t ON bt.tid = t.tid
+        where b.bid=#{id}
+
+
+
+    </select>
+</mapper>

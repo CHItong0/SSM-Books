@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qf.zlp.mapper.BookTypesMapper">
+
+<select id="AllBookTypes" resultType="com.qf.zlp.model.BookTypes">
+    select * from Book_Types
+    </select>
+
+<update id="UpDateBookType" parameterType="com.qf.zlp.model.BookTypes">
+    update Book_Types SET tid=#{tid} where bid=#{bid}
+
+    </update>
+
+<insert id="AddBookTypes">
+    insert into BookTypes(bid,tid) values (#{bid},#{tid})
+
+    </insert>
+</mapper>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+<!--spring配置-->
+    <!--包扫描，不扫描Controller-->
+    <context:component-scan base-package="com.qf.zlp" use-default-filters="true">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--注入数据库配置文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+
+    <!--ehcache 缓存机制-->
+    <bean class="org.apache.shiro.cache.ehcache.EhCacheManager" id="cacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:ehcache.xml"/>
+    </bean>
+    <!--配置-->
+    <bean class="com.alibaba.druid.pool.DruidDataSource" id="dataSource">
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="url" value="${db.url}"/>
+    </bean>
+    <!--配置sql-->
+    <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+
+       <property name="typeAliasesPackage" value="com.qf.zlp.model"/>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" id="mapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryBean"/>
+        <property name="basePackage" value="com.qf.zlp.mapper"/>
+
+    </bean>
+<!--
+        多个 Realm认证器 的配置
+        我们时候需要定义多个 Realm认证器呢？
+        例如：在我们需要多种方式验证用户
+        如：常见的 电话号登录；用户名登录，邮箱登录等等
+        这时就会用到多个 Realm认证器
+-->
+    <!--配置多Realm的认证器
+    AtLeastOneSuccessfulStrategy（org.apache.shiro.authc.pam 包下） 表示：至少有一个Realm 认证成功，就算成功
+    AllSuccessfulStrategy (org.apache.shiro.authc.pam)：表示：所有Realm都要认证成功才算成功
+    FirstSuccessfulStrategy(org.apache.authc.pam):至少一个Realm认证成功，就算成功，这个Beam 中有一个属性名为stopAfterFirstSuccess
+    表示是否在第一个 bean 认证成功后，就不再执行后面的 Realm 了，这个属性默认为false，即第一个 Realm 还是会认证的，此时FirstSuccessfulStrategy
+    和AtLeastOneSuccessfulStrategy，其实没有差别，如果将 stopAfterFirstSuccess 属性设置为 true 那么对于 FirstSuccessfulStrategy
+    而言，第一个Realm 认证成功后，后面的Realm 就不再执行
+    -->
+<!--
+    <bean class="com.qf.zlp.realm.DbaRealm" id="dbaRealm2"/>
+    <bean class="com.qf.zlp.realm.MyRealm" id="myRealm2"/>
+    <bean class="org.apache.shiro.authc.pam.ModularRealmAuthenticator" id="authenticator">
+        <property name="realms">
+            <list>
+                &lt;!&ndash;引用realm包下面的&ndash;&gt;
+                <ref bean="dbaRealm"/>
+                <ref bean="myRealm2"/>
+            </list>
+        </property>
+        <property name="authenticationStrategy">
+&lt;!&ndash;            AtLeastOneSuccessfulStrategy（org.apache.shiro.authc.pam 包下） 表示：至少有一个Realm 认证成功，就算成功&ndash;&gt;
+            <bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"/>
+        </property>
+    </bean>
+-->
+    <!--配置shiro-->
+    <!--将自定义shiro 权限管理的框架注册到spring容器中-->
+ <bean class="com.qf.zlp.realm.DbaRealm" id="DbaRealm"/>
+<!--    配置 securityManager-->
+    <bean class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" id="securityManager">
+        <property name="cacheManager" ref="cacheManager"/>
+      <property name="realm" ref="dbaRealm"/>
+        <!--引用 配置多Realm的认证器 authenticator 对象-->
+       <!-- <property name="authenticator" ref="authenticator"/>-->
+        <property name="sessionManager">
+            <bean class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+                <!--不开启 url 地址中的 sessionid 重写功能，也就是 sessionid 只能放在 Cookie 中-->
+                <property name="sessionIdUrlRewritingEnabled" value="false"/>
+            </bean>
+        </property>
+    </bean>
+    <!--配置shiro  过滤器-->
+    <bean class="org.apache.shiro.spring.web.ShiroFilterFactoryBean" id="shiroFilter">
+        <!--引入securityManager对象-->
+        <property name="securityManager" ref="securityManager"/>
+        <!--配置登录地址，如果访问一个需要登录后才能访问的页面，就会自动跳转到/login -->
+        <property name="loginUrl" value="/login"/>
+        <!--配置拦截规则-->
+        <property name="filterChainDefinitions">
+            <!--
+             必须按顺序就行配置！！！！！
+              请求参数可以diy
+              /login=anon 表示路径可以匿名访问，用于进入登录页面，或者为登录访问页面
+              /**=authc 表示其余的请求，都要经过这个路径才能访问
+            -->
+            <!--
+            authc 必须通过身份校验
+            user：可以通过rememberMe校验
+            -->
+            <value>
+                /selectUser=user,perms[user:select]
+                /deleteUser=authc,perms[user:delete]
+                /updateUser=authc,perms[user:update]
+                /addUser=authc,perms[user:add]
+                /login=anon
+                /doLogin=anon
+                /register=anon
+                /doRegister=anon
+                /allBook=user
+                /logout=logout
+                /**=authc
+            </value>
+        </property>
+    </bean>
+</beans>
