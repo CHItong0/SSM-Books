@@ -130,7 +130,7 @@
 
         </div>
         <div class="div_login_head">
-            登录
+            注册
         </div>
 
         <div class="div_empty">

@@ -20,7 +20,7 @@
     body {
         background-color: gainsboro;
         font-size: 16px;
-        border-image: url("/img/1.jpg");
+
     }
 
     .div_top_1 {
@@ -42,6 +42,7 @@
     }
 
     .login {
+        background-image: url("img/1.jpg");
 
         width: 360px;
         height: 360px;
@@ -146,8 +147,6 @@
 
             <div class="div_empty">
             </div>
-
-
             <div class="div_input_pwd">
                 <input class="input_pwd" type="password" name="password" id="password" placeholder="密码" />
             </div>
@@ -167,7 +166,7 @@
             </div>
 
             <div class="div_button_login">
-                <a href="/day13_war_exploded/register">注册</a>
+                <a href="/book/register">注册</a>
             </div>
 
         </form>
@@ -208,6 +207,8 @@
 </div>
 
 </div>
+
 </body>
+
 
 </html>
