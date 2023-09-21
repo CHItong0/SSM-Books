@@ -68,7 +68,8 @@ public class UserController {
         } catch (AuthenticationException e) {
           e.printStackTrace();
             /*如果出错往前端发送*/
-            model.addAttribute("error",e.getMessage());
+            /*model.addAttribute("error",e.getMessage());*/
+            model.addAttribute("error","账号或密码错误 ");
         }
         //登录失败就前往登录页面
         return "forward:/login";

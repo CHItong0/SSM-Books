@@ -20,7 +20,7 @@
 <body>
 <%--
 <div><shiro:guest>&lt;%&ndash;当用户没有登录的时候，这个标签中的内容会展示出来&ndash;%&gt;访客登录</shiro:guest></div>
-<div><shiro:guest><a href="day13_war_exploded/allBook">去登录</a></shiro:guest></div>
+<div><shiro:guest><a href="book/allBook">去登录</a></shiro:guest></div>
 <div><shiro:authenticated>如果当前用户通过用户名密码认证了，那么这个标签中的内容就会展示出来</shiro:authenticated></div>
 &lt;%&ndash;<shiro:principal/> 展示当前登录用户名&ndash;%&gt;
 <div><shiro:authenticated>欢迎 <shiro:principal/></shiro:authenticated></div>
@@ -30,24 +30,24 @@
 <shiro:hasRole name="admin"><shiro:principal/>具备管理员角色</shiro:hasRole>
 <shiro:hasRole name="user"><shiro:principal/>具备user角色</shiro:hasRole>
 <div><shiro:user>
-    <a href="/day13_war/selectUser">selectUser</a> <br>
+    <a href="/book/selectUser">selectUser</a> <br>
 </shiro:user></div>
 
 <shiro:authenticated>
     &lt;%&ndash;这些超链接，必须以用户名密码登录的方式登录成功之后，才可以点击&ndash;%&gt;
     <shiro:hasPermission name="user:delete">
-        <a href="/day13_war/deleteUser">deleteUser</a> <br>
+        <a href="/book/deleteUser">deleteUser</a> <br>
     </shiro:hasPermission>
     <shiro:hasPermission name="user:update">
-        <a href="/day13_war/updateUser">updateUser</a> <br>
+        <a href="/book/updateUser">updateUser</a> <br>
     </shiro:hasPermission>
     <shiro:hasPermission name="user:add">
-        <a href="/day13_war/addUser">addUser</a> <br>
+        <a href="/book/addUser">addUser</a> <br>
     </shiro:hasPermission>
 </shiro:authenticated>
 <shiro:user>
-    <a href="/day13_war/rememberMe">rememberMe</a> <br>
-    <a href="/day13_war/logout">注销登录</a>
+    <a href="/book/rememberMe">rememberMe</a> <br>
+    <a href="/book/logout">注销登录</a>
 </shiro:user>
 --%>
 
@@ -112,12 +112,12 @@
 <div class="top">
     <center>
         <ul>
-           <shiro:guest><li><a href="day13_war_exploded/allBook">登录</a></li></shiro:guest>
+           <shiro:guest><li><a href="book/allBook">登录</a></li></shiro:guest>
 
             <li>
                 <a href="#">欢迎<shiro:authenticated><shiro:principal/></shiro:authenticated></a>
                 <ul>
-        <shiro:user> <li> <a href="/day13_war_exploded/logout">注销登录</a></li></shiro:user>
+        <shiro:user> <li> <a href="/book/logout">注销登录</a></li></shiro:user>
         <shiro:user> <li><a href="${pageContext.request.contextPath}/toMeans">个人信息</a></li></shiro:user>
                     <shiro:hasPermission name="user:update">
                     <li>  <a href="${pageContext.request.contextPath}/UserPermission">用户信息管理</a></li>

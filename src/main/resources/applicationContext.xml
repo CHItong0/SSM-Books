@@ -84,8 +84,8 @@
                 /deleteUser=authc,perms[user:delete]
                 /updateUser=authc,perms[user:update]
                 /addUser=authc,perms[user:add]
+                /img/1.jpg=anon
                 /login=anon
-                /img/**=anon
                 /doLogin=anon
                 /register=anon
                 /doRegister=anon
